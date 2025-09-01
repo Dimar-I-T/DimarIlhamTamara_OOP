@@ -1,15 +1,19 @@
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     public static void main(String[] args) {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
+        Kendaraan kendaraanSupraBapak = new Kendaraan("Honda Supra", 1998, VehicleType.Motor, 3000);
+        Kendaraan kendaraanKalcer = new Kendaraan("VW Beetle", 1998, VehicleType.Mobil, 200000);
+        Kendaraan kendaraanGuede = new Kendaraan("Isuzu Giga", 2011, VehicleType.Truck, 300000);
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            System.out.println("i = " + i);
+        Customer customer1 = new Customer("Ramid", kendaraanSupraBapak);
+        Customer customer2 = new Customer("Dimar", kendaraanKalcer);
+        Customer customer3 = new Customer("Amara", kendaraanGuede);
+
+        Customer[] customers = {customer1, customer2, customer3};
+        String batas = "---------------------------------";
+        for (Customer c : customers){
+            System.out.println(batas);
+            c.showDetail();
+            System.out.println(batas);
         }
     }
 }
