@@ -10,6 +10,7 @@ public class Score implements ShowDetail {
     private int distance;
     private LocalDateTime createdAt;
 
+    // konstruktor
     Score(UUID playerId, int value, int coinsCollected, int distance) {
         this.scoreId = UUID.randomUUID();
         this.playerId = playerId;

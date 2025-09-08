@@ -23,7 +23,7 @@ public class Main {
         player2.addDistance(score2.getDistance());
 
         Player[] players = {player1, player2};
-        System.out.println("================= Player Details =================");
+        System.out.print("================= Player Details =================\n");
         for (Player player : players) {
             player.showDetail();
             System.out.println("\n");

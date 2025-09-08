@@ -42,7 +42,8 @@ public class Player implements ShowDetail{
 
     @Override
     public void showDetail() {
-        System.out.println("Player ID: " + this.playerId);
+        System.out.print("Player ID: " + this.playerId);
+        System.out.print("\n");
         System.out.println("Username: " + this.username);
         System.out.printf("High Score: %d\n", this.highscore);
         System.out.printf("Total Coins: %d\n", this.totalCoins);
