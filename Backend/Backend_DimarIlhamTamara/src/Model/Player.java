@@ -1,3 +1,5 @@
+package Model;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -18,8 +20,24 @@ public class Player implements ShowDetail{
         this.totalDistance = 0;
     }
 
-    UUID getPlayerId(){
+    public UUID getPlayerId(){
         return this.playerId;
+    }
+
+    public String getUsername() {
+        return this.username;
+    }
+
+    public int getScore() {
+        return this.highscore;
+    }
+
+    public int getTotalDistance() {
+        return this.totalDistance;
+    }
+
+    public int getTotalCoins() {
+        return this.totalCoins;
     }
 
     int updateHighScore(int newScore) {
