@@ -1,46 +1,42 @@
 package Repository;
-import java.util.Optional;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Stream;
-import java.util.stream.Collectors;
 import java.util.UUID;
+import java.util.Optional;
+import java.util.List;
+import java.util.Comparator;
+import Model.Player;
 
-public class PlayerRepository extends BaseRepository{
-    ArrayList<Model.Player> allData;
-    public Optional<Model.Player> findByUsername(String username)
-    {
-        return allData.stream()
-                .filter(player ->
-                        player.getUsername().equals(username)).findFirst();
+public class PlayerRepository extends BaseRepository<Player, UUID>{
+    private ArrayList<Player> allData = new ArrayList<>();
+    public Optional<Player> findByUsername(String username) {
+        return allData.stream().filter(player -> player.getUsername().equals(username)).findFirst();
     }
 
-    List<Model.Player> findTopPlayersByHighScore(int limit) {
-        Stream<Model.Player> SPlayer = allData.stream();
-        List<Model.Player> hasilStream = SPlayer.sorted((p1, p2) -> p1.getScore()).limit(limit).collect(Collectors.toList());
-        return hasilStream;
+    public List<Player> findTopPlayersByHighScore(int limit) {
+        return allData.stream().sorted(Comparator.comparing(p -> ((Integer) (-1 * p.getScore())))).limit(limit).toList();
     }
 
-    List<Model.Player> findByHighscoreGreaterThan(int minScore) {
-        Stream<Model.Player> SPlayer = allData.stream();
-        List<Model.Player> hasilStream = SPlayer.filter(player -> player.getScore() > minScore).collect(Collectors.toList());
-        return hasilStream;
+    public List<Player> findByHighscoreGreaterThan(int minScore) {
+        return allData.stream().filter(player -> player.getScore() > minScore).toList();
     }
 
-    List<Model.Player> findAllByOrderByTotalCoinsDesc() {
-        Stream<Model.Player> SPlayer = allData.stream();
-        List<Model.Player> hasilStream = SPlayer.sorted((p1, p2) -> p1.getTotalCoins()).collect(Collectors.toList());
-        return hasilStream;
+    public List<Player> findAllByOrderByTotalCoinsDesc() {
+        return allData.stream().sorted(Comparator.comparing(p -> ((Integer) (-1 * p.getTotalCoins())))).toList();
     }
 
-    List<Model.Player> findAllByOrderByTotalDistanceTravelledDesc() {
-        Stream<Model.Player> SPlayer = allData.stream();
-        List<Model.Player> hasilStream = SPlayer.sorted((p1, p2) -> p1.getTotalDistance()).collect(Collectors.toList());
-        return hasilStream;
+    public List<Player> findAllByOrderByTotalDistanceTravelledDesc() {
+        return allData.stream().sorted(Comparator.comparing(p -> ((Integer) (-1 * p.getTotalDistance())))).toList();
     }
 
     @Override
-    UUID getId(Model.Player entity) {
-        return entity.getPlayerId();
+    public void save(Player player) {
+        allData.add(player);
+        map.put(player.getPlayerId(), player);
+        list.add(player);
+    }
+
+    @Override
+    public UUID getId(Player player) {
+        return player.getPlayerId();
     }
 }

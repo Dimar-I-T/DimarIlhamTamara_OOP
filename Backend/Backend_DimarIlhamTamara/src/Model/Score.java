@@ -13,7 +13,7 @@ public class Score implements ShowDetail {
     private LocalDateTime createdAt;
 
     // konstruktor
-    Score(UUID playerId, int value, int coinsCollected, int distance) {
+    public Score(UUID playerId, int value, int coinsCollected, int distance) {
         this.scoreId = UUID.randomUUID();
         this.playerId = playerId;
         this.value = value;
@@ -22,16 +22,24 @@ public class Score implements ShowDetail {
         this.createdAt = LocalDateTime.now();
     }
 
-    int getValue() {
+    public UUID getPlayerId() {
+        return this.playerId;
+    }
+
+    public int getValue() {
         return this.value;
     }
 
-    int getCoinsCollected() {
+    public int getCoinsCollected() {
         return this.coinsCollected;
     }
 
-    int getDistance() {
+    public int getDistance() {
         return this.distance;
+    }
+
+    public LocalDateTime getTimeCreated() {
+        return this.createdAt;
     }
 
     @Override

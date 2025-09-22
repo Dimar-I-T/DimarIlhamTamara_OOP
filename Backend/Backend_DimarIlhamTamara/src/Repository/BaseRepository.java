@@ -5,16 +5,17 @@ import java.util.HashMap;
 import java.util.UUID;
 
 public abstract class BaseRepository<T, ID> {
-    HashMap<ID, T> map;
-    ArrayList<T> list;
+    HashMap<ID, T> map = new HashMap<>();
+    ArrayList<T> list = new ArrayList<>();
 
-    T findById(ID id) {
+    public T findById(ID id) {
         return this.map.get(id);
     }
 
-    ArrayList<T> findAll() {
+    public ArrayList<T> findAll() {
         return this.list;
     }
 
-    abstract UUID getId(Model.Player entity);
+    public abstract void save(T player);
+    public abstract UUID getId(T entity);
 }

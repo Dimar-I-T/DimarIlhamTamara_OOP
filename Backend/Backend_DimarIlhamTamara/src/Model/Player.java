@@ -11,7 +11,7 @@ public class Player implements ShowDetail{
     private int totalDistance;
     private LocalDateTime createdAt;
 
-    Player(String username) {
+    public Player(String username) {
         this.username = username;
         this.playerId = UUID.randomUUID();
         this.createdAt = LocalDateTime.now();
@@ -40,22 +40,18 @@ public class Player implements ShowDetail{
         return this.totalCoins;
     }
 
-    int updateHighScore(int newScore) {
+    public void updateHighScore(int newScore) {
         if (newScore > highscore) {
             this.highscore = newScore;
         }
-
-        return this.highscore;
     }
 
-    int addCoins(int coins) {
+    public void addCoins(int coins) {
         this.totalCoins += coins;
-        return this.totalCoins;
     }
 
-    int addDistance(int distance) {
+    public void addDistance(int distance) {
         this.totalDistance += distance;
-        return this.totalDistance;
     }
 
     @Override
