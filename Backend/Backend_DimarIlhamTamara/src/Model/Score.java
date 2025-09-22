@@ -22,6 +22,10 @@ public class Score implements ShowDetail {
         this.createdAt = LocalDateTime.now();
     }
 
+    public UUID getScoreId() {
+        return this.scoreId;
+    }
+
     public UUID getPlayerId() {
         return this.playerId;
     }

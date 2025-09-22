@@ -56,11 +56,15 @@ public class ScoreRepository extends BaseRepository<Score, UUID> {
     @Override
     public void save(Score score) {
         allData.add(score);
-        map.put(score.getPlayerId(), score);
+        dataMap.put(score.getPlayerId(), score);
     }
 
     @Override
     public UUID getId(Score score) {
         return score.getPlayerId();
+    }
+
+    public ArrayList<Score> getAllData() {
+        return allData;
     }
 }

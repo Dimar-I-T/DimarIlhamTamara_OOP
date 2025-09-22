@@ -2,6 +2,9 @@ import Model.Player;
 import Model.Score;
 import Repository.PlayerRepository;
 import Repository.ScoreRepository;
+import Service.PlayerService;
+import Service.ScoreService;
+
 import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,6 +17,10 @@ public class Main {
     public static void main(String[] args) {
         PlayerRepository playerRepo = new PlayerRepository();
         ScoreRepository scoreRepo = new ScoreRepository();
+
+        PlayerService playerService = new PlayerService(playerRepo);
+        //ScoreService scoreService = new ScoreService(scoreRepo);
+
         Player player1 = new Player("Stelle");
         Player player2 = new Player("gamerLooxmaxxing");
         Player player3 = new Player ("Stelle123");

@@ -30,11 +30,19 @@ public class PlayerRepository extends BaseRepository<Player, UUID>{
     @Override
     public void save(Player player) {
         allData.add(player);
-        map.put(player.getPlayerId(), player);
+        dataMap.put(player.getPlayerId(), player);
     }
 
     @Override
     public UUID getId(Player player) {
         return player.getPlayerId();
+    }
+
+    public ArrayList<Player> getAllData() {
+        return allData;
+    }
+
+    public Optional<Player> getPlayerById(UUID playerId) {
+        return allData.stream().filter(player -> player.getPlayerId().equals(playerId)).findFirst();
     }
 }
