@@ -7,7 +7,6 @@ import java.util.Comparator;
 import Model.Player;
 
 public class PlayerRepository extends BaseRepository<Player, UUID>{
-    private ArrayList<Player> allData = new ArrayList<>();
     public Optional<Player> findByUsername(String username) {
         return allData.stream().filter(player -> player.getUsername().equals(username)).findFirst();
     }
@@ -32,7 +31,6 @@ public class PlayerRepository extends BaseRepository<Player, UUID>{
     public void save(Player player) {
         allData.add(player);
         map.put(player.getPlayerId(), player);
-        list.add(player);
     }
 
     @Override
