@@ -7,6 +7,7 @@ import java.util.Comparator;
 import Model.Player;
 import Model.Score;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class ScoreRepository extends BaseRepository<Score, UUID> {
     public Optional<Score> findByPlayerId(UUID playerId) {
@@ -33,9 +34,16 @@ public class ScoreRepository extends BaseRepository<Score, UUID> {
                 .max(Comparator.comparingInt(Score::getValue));
     }
 
+    public List<Score> findByValueGreaterThan(Integer minValue) {
+        return allData.stream()
+                .filter(score -> score.getValue() > minValue)
+                .collect(Collectors.toList());
+    }
+
+
     public List<Score> findAllByOrderByCreatedAtDesc() {
         return allData.stream()
-                .sorted(Comparator.comparing(Score::getTimeCreated))
+                .sorted(Comparator.comparing(Score::getTimeCreated).reversed())
                 .toList();
     }
 

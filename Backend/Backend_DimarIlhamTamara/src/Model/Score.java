@@ -53,5 +53,6 @@ public class Score implements ShowDetail {
         System.out.printf("Score Value: %d\n", this.value);
         System.out.printf("Distance: %d\n", this.distance);
         System.out.println("Created At: " + this.createdAt);
+        System.out.print("\n");
     }
 }

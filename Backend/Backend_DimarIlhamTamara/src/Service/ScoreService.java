@@ -63,7 +63,11 @@ public class ScoreService {
     }
 
     public void updateScore(UUID scoreId, Score updatedScore) {
-
+        Optional<Score> score1 = scoreRepository.getAllData().stream().filter(score -> score.getScoreId().equals(scoreId)).findFirst();
+        if (score1.isPresent()){
+            scoreRepository.deleteById(scoreId);
+            scoreRepository.save(updatedScore);
+        }
     }
 
     public void deleteScore(UUID scoreId) {

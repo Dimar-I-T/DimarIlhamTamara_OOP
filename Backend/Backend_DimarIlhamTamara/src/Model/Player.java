@@ -63,5 +63,6 @@ public class Player implements ShowDetail{
         System.out.printf("Total Coins: %d\n", this.totalCoins);
         System.out.printf("Total Distance: %d\n", this.totalDistance);
         System.out.println("Created At: " + this.createdAt);
+        System.out.print("\n");
     }
 }

@@ -15,7 +15,7 @@ public class PlayerService {
         this.playerRepository = playerRepository;
     }
 
-    boolean existsByUsername(String username) {
+    public boolean existsByUsername(String username) {
         Optional<Player> player = playerRepository.findByUsername(username);
         if (player.isPresent()){
             return false;
@@ -24,9 +24,9 @@ public class PlayerService {
         }
     }
 
-    Player createPlayer(Player player) {
+    public Player createPlayer(Player player) {
         Optional<Player> player1 = playerRepository.findByUsername(player.getUsername());
-        if (player1.isPresent()) {
+        if (!player1.isPresent()) {
             playerRepository.save(player);
             return player;
         }else {
@@ -35,22 +35,23 @@ public class PlayerService {
         }
     }
 
-    Optional<Player> getPlayerById(UUID playerId) {
+    public Optional<Player> getPlayerById(UUID playerId) {
         return playerRepository.getAllData().stream().filter(player -> player.getPlayerId().equals(playerId)).findFirst();
     }
 
-    Optional<Player> getPlayerByUsername(String username) {
+    public Optional<Player> getPlayerByUsername(String username) {
         return playerRepository.findByUsername(username);
     }
 
-    ArrayList<Player> getAllPlayers() {
+    public ArrayList<Player> getAllPlayers() {
         return playerRepository.getAllData();
     }
 
     public void updatePlayer(UUID playerId, Player updatedPlayer) {
         Optional<Player> player1 = playerRepository.getPlayerById(playerId);
         if (player1.isPresent()) {
-
+            playerRepository.deleteById(playerId);
+            playerRepository.save(updatedPlayer);
         }
     }
 
@@ -69,7 +70,14 @@ public class PlayerService {
     }
 
     public void updatePlayerStats(UUID playerId, int scoreValue, int coinsCollected, int distanceTravelled) {
-
+        Optional<Player> player1 = playerRepository.getPlayerById(playerId);
+        if (player1.isPresent()){
+            player1.get().updateHighScore(scoreValue);
+            player1.get().addCoins(coinsCollected);
+            player1.get().addDistance(distanceTravelled);
+            playerRepository.deleteById(playerId);
+            playerRepository.save(player1.get());
+        }
     }
 
     public List<Player> getLeaderboardByHighScore(int limit) {
