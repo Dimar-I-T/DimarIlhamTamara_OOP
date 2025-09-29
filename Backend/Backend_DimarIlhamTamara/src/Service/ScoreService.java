@@ -62,19 +62,17 @@ public class ScoreService {
         return scoreRepository.getTotalDistanceById(playerId);
     }
 
-    public void updateScore(UUID scoreId, Score updatedScore) {
-        Optional<Score> score1 = scoreRepository.getAllData().stream().filter(score -> score.getScoreId().equals(scoreId)).findFirst();
-        if (score1.isPresent()){
-            scoreRepository.deleteById(scoreId);
-            scoreRepository.save(updatedScore);
-        }
+    public Score updateScore(UUID scoreId, Score updatedScore) {
+        Score existingScore = scoreRepository.findById(scoreId)
+                .orElseThrow(() -> new RuntimeException("Score not found with ID: " + scoreId));
+        scoreRepository.save(existingScore);
+        return existingScore;
     }
 
     public void deleteScore(UUID scoreId) {
-        Optional<Score> score1 = scoreRepository.getAllData().stream().filter(score -> score.getScoreId().equals(scoreId)).findFirst();
-        if (score1.isPresent()){
-            scoreRepository.deleteById(scoreId);
-        }
+        Score score = scoreRepository.findById(scoreId)
+                .orElseThrow(() -> new RuntimeException("Score not found with ID: " + scoreId));
+        scoreRepository.deleteById(scoreId);
     }
 
     public void deleteScoreByPlayerId(UUID playerId) {

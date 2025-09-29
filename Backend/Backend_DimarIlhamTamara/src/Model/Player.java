@@ -40,6 +40,22 @@ public class Player implements ShowDetail{
         return this.totalCoins;
     }
 
+    public void setHighScore(int highScore) {
+        this.highscore = highScore;
+    }
+
+    public void setTotalCoins(int totalCoins) {
+        this.totalCoins = totalCoins;
+    }
+
+    public void setTotalDistance(int totalDistance) {
+        this.totalDistance = totalDistance;
+    }
+    
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     public void updateHighScore(int newScore) {
         if (newScore > highscore) {
             this.highscore = newScore;
