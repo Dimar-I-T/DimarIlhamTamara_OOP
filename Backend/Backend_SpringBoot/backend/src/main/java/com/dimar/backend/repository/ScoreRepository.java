@@ -12,6 +12,7 @@ import java.util.UUID;
 
 @Repository
 public interface ScoreRepository extends JpaRepository<Score, UUID> {
+    @Query(value = "select * from scores s where s.player_id = :playerId", nativeQuery = true)
     List<Score> findByPlayerId(UUID playerId);
     boolean existsByPlayerId(UUID playerId);
 
@@ -19,17 +20,15 @@ public interface ScoreRepository extends JpaRepository<Score, UUID> {
     List<Score> findByValueGreaterThan(Integer minValue);
     List<Score> findAllByOrderByCreatedAtDesc();
 
-    @Query(value = "select * from scores s order by s.value desc limit :limit", nativeQuery = true)
+    @Query(value = "select * from scores s order by s.score desc limit :limit", nativeQuery = true)
     List<Score> findTopScores(@Param("limit") int limit);
 
-    @Query(value = "select * from scores s where s.playerId = :playerId order by s.value", nativeQuery = true)
+    @Query(value = "select * from scores s where s.player_id = :playerId order by s.score desc", nativeQuery = true)
     List<Score> findHighestScoreByPlayerId(@Param("playerId") UUID playerId);
 
-    @Query(value = "select sum(s.coinsCollected) from scores s where s.playerId = :playerId", nativeQuery = true)
+    @Query(value = "select sum(s.coins_collected) from scores s where s.player_id = :playerId", nativeQuery = true)
     Integer getTotalCoinsByPlayerId(@Param("playerId") UUID playerId);
 
-    @Query(value = "select sum(s.distanceTravelled) from scores s where s.playerId = :playerId", nativeQuery = true)
+    @Query(value = "select sum(s.distance_travelled) from scores s where s.player_id = :playerId", nativeQuery = true)
     Integer getTotalDistanceByPlayerId(UUID playerId);
-
-    UUID player(Player player);
 }

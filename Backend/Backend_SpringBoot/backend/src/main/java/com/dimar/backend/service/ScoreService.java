@@ -35,23 +35,23 @@ public class ScoreService {
         }
     }
 
-    Optional<Score> getScoreById(UUID scoreId) {
-        return scoreRepository.findById(scoreId);
+    public Optional<Score> getScoreById(UUID score_id) {
+        return scoreRepository.findById(score_id);
     }
 
-    List<Score> getAllScores() {
+    public List<Score> getAllScores() {
         return scoreRepository.findAll();
     }
 
-    List<Score> getScoresByPlayerId(UUID playerId) {
-        return scoreRepository.findByPlayerId(playerId);
+    public List<Score> getScoresByPlayerId(UUID player_id) {
+        return scoreRepository.findByPlayerId(player_id);
     }
 
-    List<Score> getScoresByPlayerIdOrderByValue(UUID playerId) {
-        return scoreRepository.findHighestScoreByPlayerId(playerId);
+    public List<Score> getScoresByPlayerIdOrderByValue(UUID player_id) {
+        return scoreRepository.findHighestScoreByPlayerId(player_id);
     }
 
-    List<Score> getLeaderboard(int limit) {
+    public List<Score> getLeaderboard(int limit) {
         return scoreRepository.findTopScores(limit);
     }
 }

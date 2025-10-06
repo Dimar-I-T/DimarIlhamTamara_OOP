@@ -2,11 +2,14 @@ package com.dimar.backend.model;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
 @Table(name = "scores")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Score {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -15,10 +18,6 @@ public class Score {
 
     @Column(name = "player_id", nullable = false)
     private UUID playerId;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "player_id", insertable = false, updatable = false)
-    private Player player;
 
     @Column(name = "score", nullable = false)
     private Integer value;
@@ -56,14 +55,6 @@ public class Score {
 
     public void setPlayerId(UUID playerId) {
         this.playerId = playerId;
-    }
-
-    public Player getPlayer() {
-        return player;
-    }
-
-    public void setPlayer(Player player) {
-        this.player = player;
     }
 
     public Integer getValue() {
