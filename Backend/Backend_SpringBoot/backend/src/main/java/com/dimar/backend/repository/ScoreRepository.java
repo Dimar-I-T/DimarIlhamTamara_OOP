@@ -31,4 +31,7 @@ public interface ScoreRepository extends JpaRepository<Score, UUID> {
 
     @Query(value = "select sum(s.distance_travelled) from scores s where s.player_id = :playerId", nativeQuery = true)
     Integer getTotalDistanceByPlayerId(UUID playerId);
+
+    @Query(value = "select * from scores s where s.player_id = :playerId order by s.score desc limit 1", nativeQuery = true)
+    Optional<Score> getHighestScoreByPlayerId1(@Param("playerId") UUID playerId);
 }

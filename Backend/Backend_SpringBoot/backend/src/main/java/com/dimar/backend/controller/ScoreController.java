@@ -60,6 +60,26 @@ public class ScoreController {
         }
     }
 
+    @PutMapping("/{scoreId}")
+    ResponseEntity<?> updateScore(@PathVariable UUID scoreId,  @RequestBody Score score) {
+        try {
+            Score updatedScore = scoreService.updateScore(scoreId, score);
+            return ResponseEntity.status(HttpStatus.OK).body(updatedScore);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/{scoreId}")
+    ResponseEntity<?> deleteScore(@PathVariable UUID scoreId) {
+        try {
+            scoreService.deleteScore(scoreId);
+            return ResponseEntity.status(HttpStatus.OK).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
     @GetMapping("/player/{playerId}")
     ResponseEntity<?> getScoresByPlayerId(@PathVariable UUID playerId) {
         System.out.println("cek " + playerId);
@@ -71,8 +91,8 @@ public class ScoreController {
         }
     }
 
-    @GetMapping("/player/ordered/{playerId}")
-    ResponseEntity<?> getScoresByPlayerIdOrderByValue(@PathVariable UUID playerId) {
+    @GetMapping("/player/{playerId}/ordered")
+    ResponseEntity<?> getScoresByPlayerIdOrdered(@PathVariable UUID playerId) {
         try {
             List<Score> scores = scoreService.getScoresByPlayerIdOrderByValue(playerId);
             return ResponseEntity.status(HttpStatus.OK).body(scores);
@@ -88,6 +108,66 @@ public class ScoreController {
             return ResponseEntity.status(HttpStatus.OK).body(scores);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/player/{playerId}/highest")
+    ResponseEntity<?> getHighestScoreByPlayerId(@PathVariable UUID playerId) {
+        try {
+            Optional<Score> scores = scoreService.getHighestScoreByPlayerId(playerId);
+            return ResponseEntity.status(HttpStatus.OK).body(scores);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/above/{minValue}")
+    ResponseEntity<List<Score>> getScoresAboveValue(@PathVariable Integer minValue) {
+        try {
+            List<Score> scores = scoreService.getScoresAboveValue(minValue);
+            return ResponseEntity.status(HttpStatus.OK).body(scores);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
+    @GetMapping("/recent")
+    ResponseEntity<List<Score>> getRecentScores() {
+        try {
+            List<Score> scores = scoreService.getRecentScores();
+            return ResponseEntity.status(HttpStatus.OK).body(scores);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
+    @GetMapping("/player/{playerId}/total-coins")
+    ResponseEntity<?> getTotalCoinsByPlayerId(@PathVariable UUID playerId) {
+        try {
+            Integer total = scoreService.getTotalCoinsByPlayerId(playerId);
+            return ResponseEntity.status(HttpStatus.OK).body(total);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
+    @GetMapping("/player/{playerId}/total-distance")
+    ResponseEntity<?> getTotalDistanceByPlayerId(@PathVariable UUID playerId) {
+        try {
+            Integer total = scoreService.getTotalDistanceByPlayerId(playerId);
+            return ResponseEntity.status(HttpStatus.OK).body(total);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
+    @DeleteMapping("/player/{playerId}")
+    ResponseEntity<?> deleteScoresByPlayerId(@PathVariable UUID playerId) {
+        try {
+            scoreService.deleteScoresByPlayerId(playerId);
+            return ResponseEntity.status(HttpStatus.OK).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 }
