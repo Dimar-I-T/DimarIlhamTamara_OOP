@@ -19,7 +19,6 @@ public class PlayerService {
     @Autowired
     private PlayerRepository playerRepository;
 
-
 //    public PlayerService(PlayerRepository playerRepository) {
 //        this.playerRepository = playerRepository;
 //    }
@@ -126,6 +125,6 @@ public class PlayerService {
     }
 
     public List<Player> getLeaderboardByTotalDistance() {
-        return playerRepository.findAllByOrderByTotalDistanceTravelledDesc();
+        return playerRepository.findAllByOrderByTotalDistanceDesc();
     }
 }

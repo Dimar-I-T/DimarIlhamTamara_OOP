@@ -23,6 +23,7 @@ public interface PlayerRepository extends JpaRepository<Player, UUID> {
     List<Player> findAllByOrderByTotalCoinsDesc();
 
     List<Player> findAllByOrderByTotalDistanceDesc();
+
+    @Query(value = "select * from players", nativeQuery = true)
     List<Player> getAllPlayers();
-    List<Player> findAllByOrderByTotalDistanceTravelledDesc();
 }

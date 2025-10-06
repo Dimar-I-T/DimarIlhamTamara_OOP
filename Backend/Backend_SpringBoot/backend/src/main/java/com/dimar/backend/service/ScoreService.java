@@ -1,0 +1,57 @@
+package com.dimar.backend.service;
+
+import com.dimar.backend.repository.ScoreRepository;
+import com.dimar.backend.repository.PlayerRepository;
+import com.dimar.backend.model.Player;
+import com.dimar.backend.model.Score;
+import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+@Service
+public class ScoreService {
+    @Autowired
+    private ScoreRepository scoreRepository;
+
+    @Autowired
+    private PlayerRepository playerRepository;
+
+    @Autowired
+    private PlayerService playerService;
+
+    @Transactional
+    public Score createScore(Score score) {
+        Optional<Player> player = playerService.getPlayerById(score.getPlayerId());
+        if (player.isEmpty()) {
+            throw new RuntimeException("Player doesn't exist");
+        }else {
+            Score scoreTersimpan = scoreRepository.save(score);
+            playerService.updatePlayerStats(player.get().getPlayerId(), score.getValue(), score.getCoinsCollected(), score.getDistanceTravelled());
+            return scoreTersimpan;
+        }
+    }
+
+    Optional<Score> getScoreById(UUID scoreId) {
+        return scoreRepository.findById(scoreId);
+    }
+
+    List<Score> getAllScores() {
+        return scoreRepository.findAll();
+    }
+
+    List<Score> getScoresByPlayerId(UUID playerId) {
+        return scoreRepository.findByPlayerId(playerId);
+    }
+
+    List<Score> getScoresByPlayerIdOrderByValue(UUID playerId) {
+        return scoreRepository.findHighestScoreByPlayerId(playerId);
+    }
+
+    List<Score> getLeaderboard(int limit) {
+        return scoreRepository.findTopScores(limit);
+    }
+}

@@ -32,7 +32,7 @@ public class PlayerController {
         return ResponseEntity.ok(allPlayers);
     }
 
-    @GetMapping("/{player_id")
+    @GetMapping("/{player_id}")
     ResponseEntity<?> getPlayerById(@PathVariable UUID playerId) {
         Optional<Player> player = playerService.getPlayerById(playerId);
         if (player.isPresent()) {
@@ -60,22 +60,35 @@ public class PlayerController {
     @PostMapping
     public ResponseEntity<?> createPlayer(@RequestBody Player playerRequest) {
         System.out.println("POST /players called with username: " + playerRequest.getUsername());
-        Player newPlayer = new Player();
-        newPlayer.setUsername(playerRequest.getUsername());
-        Player savedPlayer = playerService.createPlayer(newPlayer);
-        return ResponseEntity.ok(savedPlayer);
+        try {
+            Player newPlayer = new Player();
+            newPlayer.setUsername(playerRequest.getUsername());
+            Player savedPlayer = playerService.createPlayer(newPlayer);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedPlayer);
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
-    @PutMapping("/{playerId")
-    public ResponseEntity<?> updatePlayer(@RequestBody UUID playerId, Player playerRequest) {
+    @PutMapping("/{playerId}")
+    public ResponseEntity<?> updatePlayer(@PathVariable UUID playerId, Player playerRequest) {
         System.out.println("POST /players called with username: " + playerRequest.getUsername());
-        Player updatedP = playerService.updatePlayer(playerId, playerRequest);
-        return  ResponseEntity.ok(updatedP);
+        try {
+            Player updatedP = playerService.updatePlayer(playerId, playerRequest);
+            return ResponseEntity.status(HttpStatus.CREATED).body(updatedP);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
     @DeleteMapping("/{playerId}")
-    public void deletePlayer(@RequestBody UUID playerId) {
-        playerService.deletePlayer(playerId);
+    public ResponseEntity<?> deletePlayer(@PathVariable UUID playerId) {
+        try {
+            playerService.deletePlayer(playerId);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
     @GetMapping("/leaderboard/high-score")
