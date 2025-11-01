@@ -54,7 +54,7 @@ public class Main extends ApplicationAdapter {
         ground.update(camera.position.x);
         player.checkBoundaries(ground, Gdx.graphics.getHeight());
         gameManager.setScore((int) player.getDistanceTravelled());
-        System.out.println("Score = " + gameManager.getScore());
+        System.out.println("Distance Travelled = " + player.getDistanceTravelled());
     }
 
     private void updateCamera(float delta) {
