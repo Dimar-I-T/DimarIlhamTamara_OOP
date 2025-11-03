@@ -16,13 +16,18 @@ public class HorizontalLaser extends BaseObstacle{
     }
 
     @Override
+    public void update() {
+        updateCollider();
+    }
+
+    @Override
     public void updateCollider() {
-        collider = new Rectangle(getPosition().x, getPosition().y, length, WIDTH);
+        collider.set(getPosition().x, getPosition().y, length, WIDTH);
     }
 
     @Override
     public void drawShape(ShapeRenderer shapeRenderer) {
-        shapeRenderer.setColor(0.5f, 0.5f, 0.5f,  1f);
+        shapeRenderer.setColor(1f, 0f, 0f,  1f);
         shapeRenderer.rect(getPosition().x, getPosition().y, length, WIDTH);
     }
 

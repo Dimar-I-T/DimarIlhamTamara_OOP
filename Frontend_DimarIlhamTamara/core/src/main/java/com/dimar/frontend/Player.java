@@ -15,6 +15,8 @@ public class Player {
     private Rectangle collider;
     private float width = 64f;
     private float height = 64f;
+    private boolean isDead;
+    private Vector2 startPosition;
 
     private float baseSpeed = 300f;
     private float distanceTravelled = 0f;
@@ -23,17 +25,36 @@ public class Player {
         position = startPosition;
         velocity = new Vector2(baseSpeed, 0);
         collider = new Rectangle(startPosition.x, startPosition.y, width, height);
+        this.startPosition = startPosition;
     }
 
     public void update(float delta, boolean isFlying) {
-        updateDistanceAndSpeed(delta);
-        updatePosition(delta);
-        applyGravity(delta);
-        if (isFlying) {
-            fly(delta);
-        }
+        if (!isDead) {
+            updateDistanceAndSpeed(delta);
+            updatePosition(delta);
+            applyGravity(delta);
+            if (isFlying) {
+                fly(delta);
+            }
 
-        updateCollider();
+            updateCollider();
+        }
+    }
+
+    public void die() {
+        isDead = true;
+        velocity.set(new Vector2(0, 0));
+    }
+
+    public void reset() {
+        isDead = false;
+        position.set(startPosition);
+        velocity.set(new Vector2(baseSpeed, 0));
+        distanceTravelled = 0f;
+    }
+
+    public boolean getIsDead() {
+        return isDead;
     }
 
     private void updateDistanceAndSpeed(float delta) {
@@ -84,6 +105,10 @@ public class Player {
 
     public Vector2 getPosition() {
         return position;
+    }
+
+    public Rectangle getCollider() {
+        return collider;
     }
 
     public float getWidth() {

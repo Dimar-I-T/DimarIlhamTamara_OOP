@@ -13,13 +13,14 @@ public abstract class BaseObstacle {
     private boolean active = false;
 
     public BaseObstacle(Vector2 startPosition, int length) {
-        position = startPosition;
+        this.position = new Vector2(startPosition);
         this.length = length;
+        this.collider = new Rectangle();
         updateCollider();
     }
 
     public void initialize(Vector2 startPosition, int length) {
-        position = startPosition;
+        this.position.set(startPosition);
         this.length = length;
         updateCollider();
     }
@@ -28,6 +29,10 @@ public abstract class BaseObstacle {
         if (active) {
             drawShape(shapeRenderer);
         }
+    }
+
+    public void update() {
+        updateCollider();
     }
 
     public boolean isActive() {
@@ -39,13 +44,12 @@ public abstract class BaseObstacle {
     }
 
     public boolean isOffScreenCamera(float cameraLeftEdge) {
-        int w = Gdx.graphics.getWidth();
-        return (cameraLeftEdge < w);
+        return position.x + getRenderWidth() < cameraLeftEdge;
     }
 
     public abstract void updateCollider();
 
-    public abstract void drawShape(ShapeRenderer  shapeRenderer);
+    public abstract void drawShape(ShapeRenderer shapeRenderer);
 
     public abstract float getRenderWidth();
 
@@ -56,7 +60,7 @@ public abstract class BaseObstacle {
     }
 
     public void setPosition(float x, float y) {
-        this.position = new Vector2(x, y);
+        this.position.set(x, y);
     }
 
     public Vector2 getPosition() {

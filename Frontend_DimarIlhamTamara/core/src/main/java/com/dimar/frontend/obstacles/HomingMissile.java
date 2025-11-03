@@ -1,10 +1,11 @@
 package com.dimar.frontend.obstacles;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.dimar.frontend.Player;
 
-public class HomingMissile extends BaseObstacle{
+public class HomingMissile extends BaseObstacle {
     private Player target;
     private Vector2 velocity;
     private float speed = 200f;
@@ -14,6 +15,7 @@ public class HomingMissile extends BaseObstacle{
     public HomingMissile(Vector2 startPosition, int length) {
         super(startPosition, length);
         velocity = new Vector2(0, 0);
+        collider = new Rectangle(startPosition.x, startPosition.y, width, height);
     }
 
     @Override
@@ -31,17 +33,15 @@ public class HomingMissile extends BaseObstacle{
             return false;
         }
 
-        return (target.getPosition().x > this.getPosition().x);
+        return (target.getPosition().x <= this.getPosition().x);
     }
 
     public void update(float delta) {
-        if (isActive()) {
-            if (isTargetingPlayer()) {
-                Vector2 targetPosition = target.getPosition();
-                velocity.set(targetPosition).sub(getPosition()).scl(speed);
-                setPosition(velocity.x * delta, velocity.y * delta);
-                updateCollider();
-            }
+        if (isActive() && isTargetingPlayer()) {
+            Vector2 targetPosition = target.getPosition();
+            velocity.set(targetPosition).sub(getPosition()).nor().scl(speed);
+            setPosition(getPosition().x + velocity.x * delta, getPosition().y + velocity.y * delta);
+            updateCollider();
         }
     }
 
@@ -52,17 +52,17 @@ public class HomingMissile extends BaseObstacle{
 
     @Override
     public void drawShape(ShapeRenderer shapeRenderer) {
-        shapeRenderer.setColor(0.5f, 0.5f, 0.5f,  1f);
-        shapeRenderer.rect(getPosition().x, getPosition().y, WIDTH, length);
+        shapeRenderer.setColor(1f, 1f, 0f, 1f);
+        shapeRenderer.rect(getPosition().x, getPosition().y, this.width, this.height);
     }
 
     @Override
     public float getRenderWidth() {
-        return WIDTH;
+        return this.width;
     }
 
     @Override
     public float getRenderHeight() {
-        return length;
+        return this.height;
     }
 }
