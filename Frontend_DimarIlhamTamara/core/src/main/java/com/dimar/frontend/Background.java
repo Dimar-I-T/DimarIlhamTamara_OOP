@@ -29,12 +29,11 @@ public class Background {
     }
 
     public void render(SpriteBatch batch) {
-        float faktorH = h / height;
-        float faktorW = w / width;
-        batch.draw(backgroundTexture, Gdx.graphics.getWidth() * (i - 1 + 0.2f), 0, Gdx.graphics.getWidth(), h);
-        batch.draw(backgroundTexture, Gdx.graphics.getWidth() * (i + 0.2f), 0, Gdx.graphics.getWidth(), h);
-        batch.draw(backgroundTexture, Gdx.graphics.getWidth() * (i + 1 + 0.2f), 0, Gdx.graphics.getWidth(), h);
-        if (currentCameraX > Gdx.graphics.getWidth()*(i + 1 + 0.2f)) {
+        float sizeW = (width / height) * Gdx.graphics.getHeight();
+        batch.draw(backgroundTexture, sizeW * (i - 1 + 0.2f), 0, sizeW, Gdx.graphics.getHeight());
+        batch.draw(backgroundTexture, sizeW * (i + 0.2f), 0, sizeW, Gdx.graphics.getHeight());
+        batch.draw(backgroundTexture, sizeW * (i + 1 + 0.2f), 0, sizeW, Gdx.graphics.getHeight());
+        if (currentCameraX > sizeW*(i + 1 + 0.2f)) {
             i++;
         }
     }
