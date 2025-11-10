@@ -13,6 +13,9 @@ public class Background {
     private float width;
     private float height;
     private float currentCameraX;
+    float w = Gdx.graphics.getWidth();
+    float h = Gdx.graphics.getHeight();
+    int i = 0;
 
     public Background() {
         backgroundTexture = new Texture("background.png");
@@ -23,14 +26,19 @@ public class Background {
 
     public void update(float cameraX) {
         currentCameraX = cameraX;
+        System.out.println("camera x = " + currentCameraX);
+        System.out.println("w = " + w);
     }
 
     public void render(SpriteBatch batch) {
-        float w = Gdx.graphics.getWidth();
-        float h = Gdx.graphics.getHeight();
         float faktorH = h / height;
         float faktorW = w / width;
-        batch.draw(backgroundTexture, currentCameraX - w/2f, 0, w, h);
+        batch.draw(backgroundTexture, Gdx.graphics.getWidth() * (i - 1 + 0.2f), 0, Gdx.graphics.getWidth(), h);
+        batch.draw(backgroundTexture, Gdx.graphics.getWidth() * (i + 0.2f), 0, Gdx.graphics.getWidth(), h);
+        batch.draw(backgroundTexture, Gdx.graphics.getWidth() * (i + 1 + 0.2f), 0, Gdx.graphics.getWidth(), h);
+        if (currentCameraX > Gdx.graphics.getWidth()*(i + 1 + 0.2f)) {
+            i++;
+        }
     }
 
     public void dispose() {

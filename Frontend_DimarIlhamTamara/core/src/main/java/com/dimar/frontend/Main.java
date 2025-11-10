@@ -45,6 +45,7 @@ public class Main extends ApplicationAdapter {
     private float cameraOffset = 0.2f;
     private int lastLoggedScore = -1;
     private SpriteBatch batch;
+    float cameraFocus;
 
     private Background background;
     private Command jetpackCommand, restartCommand;
@@ -104,8 +105,7 @@ public class Main extends ApplicationAdapter {
     }
 
     private void update(float delta) {
-        boolean isFlying = Gdx.input.isKeyPressed(Input.Keys.SPACE);
-        if (isFlying) {
+        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
             jetpackCommand.execute();
         }
 
@@ -120,7 +120,8 @@ public class Main extends ApplicationAdapter {
 
         background.update(camera.position.x);
 
-        player.update(delta, isFlying);
+        cameraFocus = player.getPosition().x + Gdx.graphics.getWidth() * cameraOffset;
+        player.update(delta);
         updateCamera(delta);
         ground.update(camera.position.x);
         player.checkBoundaries(ground, Gdx.graphics.getHeight());
@@ -144,7 +145,6 @@ public class Main extends ApplicationAdapter {
     }
 
     private void updateCamera(float delta) {
-        float cameraFocus = player.getPosition().x + Gdx.graphics.getWidth() * cameraOffset;
         camera.position.set(cameraFocus, camera.viewportHeight / 2f, 0);
         camera.update();
     }
@@ -194,17 +194,12 @@ public class Main extends ApplicationAdapter {
         }
     }
 
-    private void resetGame() {
-        player.reset();
+    public void resetGame() {
         obstacleFactory.releaseAllObstacles();
         obstacleSpawnTimer = 0f;
         lastObstacleSpawnX = 0f;
-        float cameraFocus = player.getPosition().x + Gdx.graphics.getWidth() * cameraOffset;
         camera.position.set(cameraFocus, camera.viewportHeight / 2f, 0);
-        gameManager.setScore(0);
-        scoreUIObserver.update(0);
         lastLoggedScore = -1;
-        currentScore = 0;
         System.out.println("Game reset!");
     }
 

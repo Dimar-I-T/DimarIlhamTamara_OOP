@@ -20,6 +20,7 @@ public class Player {
 
     private float baseSpeed = 300f;
     private float distanceTravelled = 0f;
+    private float Delta;
 
     public Player(Vector2 startPosition) {
         position = startPosition;
@@ -28,15 +29,12 @@ public class Player {
         this.startPosition = startPosition;
     }
 
-    public void update(float delta, boolean isFlying) {
+    public void update(float delta) {
         if (!isDead) {
             updateDistanceAndSpeed(delta);
             updatePosition(delta);
             applyGravity(delta);
-            if (isFlying) {
-                fly(delta);
-            }
-
+            Delta = delta;
             updateCollider();
         }
     }
@@ -78,8 +76,8 @@ public class Player {
         }
     }
 
-    public void fly(float delta) {
-        velocity.y += force * delta;
+    public void fly() {
+        velocity.y += force * Delta;
     }
 
     private void updateCollider() {
