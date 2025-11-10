@@ -78,7 +78,7 @@ public class Player {
         }
     }
 
-    private void fly(float delta) {
+    public void fly(float delta) {
         velocity.y += force * delta;
     }
 

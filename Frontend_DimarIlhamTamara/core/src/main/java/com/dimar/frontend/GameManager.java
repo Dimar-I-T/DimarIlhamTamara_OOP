@@ -1,12 +1,17 @@
 package com.dimar.frontend;
 
+import com.dimar.frontend.observers.Observer;
+import com.dimar.frontend.observers.ScoreManager;
+
 public class GameManager {
     private static GameManager instance;
     private int score;
+    private ScoreManager scoreManager;
     private boolean gameActive;
 
     private GameManager() {
         score = 0;
+        scoreManager.setScore(0);
         gameActive = false;
     }
 
@@ -20,6 +25,7 @@ public class GameManager {
 
     public void startGame() {
         score = 0;
+        scoreManager.setScore(0);
         gameActive = true;
         System.out.println("Game Started!");
     }
@@ -27,10 +33,19 @@ public class GameManager {
     public void setScore(int newScore) {
         if (gameActive) {
             score = newScore;
+            scoreManager.setScore(newScore);
         }
     }
 
     public int getScore() {
-        return score;
+        return scoreManager.getScore();
+    }
+
+    public void addObserver(Observer observer) {
+        scoreManager.addObserver(observer);
+    }
+
+    public void removeObserver(Observer observer) {
+        scoreManager.removeObserver(observer);
     }
 }

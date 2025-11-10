@@ -13,7 +13,11 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.dimar.frontend.commands.Command;
+import com.dimar.frontend.commands.JetpackCommand;
+import com.dimar.frontend.commands.RestartCommand;
 import com.dimar.frontend.factories.ObstacleFactory;
+import com.dimar.frontend.observers.ScoreUIObserver;
 import com.dimar.frontend.obstacles.BaseObstacle;
 import com.dimar.frontend.obstacles.HomingMissile;
 
@@ -35,9 +39,16 @@ public class Main extends ApplicationAdapter {
     static final float MIN_OBSTACLE_GAP = 200f;
     static final float OBSTACLE_CLUSTER_SPACING = 250f;
 
+    float currentScore;
+
     private OrthographicCamera camera;
     private float cameraOffset = 0.2f;
     private int lastLoggedScore = -1;
+    private SpriteBatch batch;
+
+    private Background background;
+    private Command jetpackCommand, restartCommand;
+    private ScoreUIObserver scoreUIObserver;
 
     @Override
     public void create() {
@@ -47,6 +58,17 @@ public class Main extends ApplicationAdapter {
         camera.setToOrtho(false);
         player = new Player(new Vector2(100, Gdx.graphics.getHeight() / 2f));
         ground = new Ground();
+
+        jetpackCommand = new JetpackCommand(player, Gdx.graphics.getDeltaTime());
+
+        restartCommand = new RestartCommand(player, gameManager);
+
+        scoreUIObserver = new ScoreUIObserver();
+
+        gameManager.addObserver(scoreUIObserver);
+
+        background = new Background();
+
         obstacleFactory = new ObstacleFactory();
         obstacleSpawnTimer = 0f;
         gameManager.startGame();
@@ -62,22 +84,38 @@ public class Main extends ApplicationAdapter {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         player.renderShape(shapeRenderer);
         ground.renderShape(shapeRenderer);
+        if (batch == null) {
+            batch = new SpriteBatch();
+        }
+
+        batch.begin();
+        background.render(batch);
+
+
         for (BaseObstacle obstacle : obstacleFactory.getAllInUseObstacles()) {
             obstacle.render(shapeRenderer);
         }
 
+        scoreUIObserver.render((int) currentScore);
         shapeRenderer.end();
+        batch.end();
     }
 
     private void update(float delta) {
         boolean isFlying = Gdx.input.isKeyPressed(Input.Keys.SPACE);
+        if (isFlying) {
+            jetpackCommand.execute();
+        }
+
         if (player.getIsDead()) {
             if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-                resetGame();
+                restartCommand.execute();
             }
 
             return;
         }
+
+        background.update(camera.position.x);
 
         player.update(delta, isFlying);
         updateCamera(delta);
@@ -93,6 +131,7 @@ public class Main extends ApplicationAdapter {
             if (currentScoreMeters != lastLoggedScore) {
                 System.out.println("Distance: " + currentScoreMeters + "m");
                 lastLoggedScore = currentScoreMeters;
+                currentScore = currentScoreMeters;
             }
 
             gameManager.setScore(currentScoreMeters);
@@ -168,5 +207,9 @@ public class Main extends ApplicationAdapter {
     public void dispose() {
         shapeRenderer.dispose();
         obstacleFactory.releaseAllObstacles();
+
+
+        scoreUIObserver.dispose();
+        background.dispose();
     }
 }
