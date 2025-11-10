@@ -26,8 +26,6 @@ public class Background {
 
     public void update(float cameraX) {
         currentCameraX = cameraX;
-        System.out.println("camera x = " + currentCameraX);
-        System.out.println("w = " + w);
     }
 
     public void render(SpriteBatch batch) {
