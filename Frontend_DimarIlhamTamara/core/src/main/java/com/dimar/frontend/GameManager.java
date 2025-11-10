@@ -11,6 +11,7 @@ public class GameManager {
 
     private GameManager() {
         score = 0;
+        scoreManager = new ScoreManager();
         scoreManager.setScore(0);
         gameActive = false;
     }
@@ -32,7 +33,6 @@ public class GameManager {
 
     public void setScore(int newScore) {
         if (gameActive) {
-            score = newScore;
             scoreManager.setScore(newScore);
         }
     }

@@ -23,15 +23,18 @@ public class ScoreManager implements Subject{
     }
 
     @Override
-    public void notifyObserver(int newScore) {
+    public void notifyObservers(int newScore) {
         for (Observer observer : observers) {
             observer.update(newScore);
         }
     }
 
     public void setScore(int newScore) {
-        this.score = newScore;
-        notifyObserver(score);
+        if (newScore != score) {
+            this.score = newScore;
+        }
+
+        notifyObservers(score);
     }
 
     public int getScore() {

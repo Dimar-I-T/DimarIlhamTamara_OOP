@@ -80,25 +80,27 @@ public class Main extends ApplicationAdapter {
         Gdx.gl.glClearColor(0.529f, 0.808f, 0.922f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         update(delta);
-        shapeRenderer.setProjectionMatrix(camera.combined);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        player.renderShape(shapeRenderer);
-        ground.renderShape(shapeRenderer);
         if (batch == null) {
             batch = new SpriteBatch();
         }
 
+        batch.setProjectionMatrix(camera.combined);
         batch.begin();
         background.render(batch);
 
+        shapeRenderer.setProjectionMatrix(camera.combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        batch.end();
+
+        player.renderShape(shapeRenderer);
+        ground.renderShape(shapeRenderer);
 
         for (BaseObstacle obstacle : obstacleFactory.getAllInUseObstacles()) {
             obstacle.render(shapeRenderer);
         }
 
-        scoreUIObserver.render((int) currentScore);
+        scoreUIObserver.render(scoreUIObserver.getScore());
         shapeRenderer.end();
-        batch.end();
     }
 
     private void update(float delta) {
@@ -110,6 +112,7 @@ public class Main extends ApplicationAdapter {
         if (player.getIsDead()) {
             if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
                 restartCommand.execute();
+                resetGame();
             }
 
             return;
@@ -199,7 +202,9 @@ public class Main extends ApplicationAdapter {
         float cameraFocus = player.getPosition().x + Gdx.graphics.getWidth() * cameraOffset;
         camera.position.set(cameraFocus, camera.viewportHeight / 2f, 0);
         gameManager.setScore(0);
+        scoreUIObserver.update(0);
         lastLoggedScore = -1;
+        currentScore = 0;
         System.out.println("Game reset!");
     }
 
@@ -207,8 +212,6 @@ public class Main extends ApplicationAdapter {
     public void dispose() {
         shapeRenderer.dispose();
         obstacleFactory.releaseAllObstacles();
-
-
         scoreUIObserver.dispose();
         background.dispose();
     }

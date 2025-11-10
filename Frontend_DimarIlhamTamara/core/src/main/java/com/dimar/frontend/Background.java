@@ -30,9 +30,7 @@ public class Background {
         float h = Gdx.graphics.getHeight();
         float faktorH = h / height;
         float faktorW = w / width;
-        batch.begin();
-        batch.draw(backgroundTexture, currentCameraX, 0);
-        batch.end();
+        batch.draw(backgroundTexture, currentCameraX - w/2f, 0, w, h);
     }
 
     public void dispose() {

@@ -4,7 +4,7 @@ import com.dimar.frontend.Player;
 
 public class JetpackCommand implements Command {
     private Player player;
-    private float delta;
+    private final float delta;
     public JetpackCommand(Player player, float delta) {
         this.player = player;
         this.delta = delta;
@@ -16,6 +16,4 @@ public class JetpackCommand implements Command {
             player.fly(delta);
         }
     }
-
-
 }
