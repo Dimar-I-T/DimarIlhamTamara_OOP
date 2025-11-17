@@ -60,7 +60,7 @@ public class Main extends ApplicationAdapter {
         player = new Player(new Vector2(100, Gdx.graphics.getHeight() / 2f));
         ground = new Ground();
 
-        jetpackCommand = new JetpackCommand(player, Gdx.graphics.getDeltaTime());
+        jetpackCommand = new JetpackCommand(player);
 
         restartCommand = new RestartCommand(player, gameManager);
 

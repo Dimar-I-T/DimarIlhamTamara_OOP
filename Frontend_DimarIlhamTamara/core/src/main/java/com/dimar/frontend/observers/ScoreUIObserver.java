@@ -11,7 +11,7 @@ public class ScoreUIObserver implements Observer{
     private SpriteBatch batch;
     private int score;
     public ScoreUIObserver() {
-        font = new BitmapFont();
+        font = new BitmapFont(Gdx.files.internal("arial.fnt"));
         font.setColor(Color.WHITE);
         batch = new SpriteBatch();
     }
