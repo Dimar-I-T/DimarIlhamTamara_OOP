@@ -47,16 +47,6 @@ public class ObstacleFactory {
         public abstract String getName();
     }
 
-    /** Weighted creator for probability-based spawning */
-    private static class WeightedCreator {
-        ObstacleCreator creator;
-        int weight;
-        WeightedCreator(ObstacleCreator creator, int weight) {
-            this.creator = creator;
-            this.weight = weight;
-        }
-    }
-
     private final Map<String, ObstacleCreator> creators = new HashMap<>();
     private final List<ObstacleCreator> weightedSelection = new ArrayList<>();
     private void register(ObstacleCreator creator) {
@@ -90,7 +80,7 @@ public class ObstacleFactory {
     }
 
     private ObstacleCreator selectWeightedCreator() {
-        int randomValue = random.nextInt(weightedSelection.size()) - 1;
+        int randomValue = random.nextInt(weightedSelection.size());
         return weightedSelection.get(randomValue);
     }
 
@@ -120,10 +110,10 @@ public class ObstacleFactory {
 
     public List<String> getRegisteredCreatorNames() {
         List<String> names = new ArrayList<>();
-
         for (ObstacleCreator wc : creators.values()) {
             names.add(wc.getName());
         }
+
         return names;
     }
 }

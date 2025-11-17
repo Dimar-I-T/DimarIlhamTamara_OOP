@@ -19,8 +19,13 @@ import com.dimar.frontend.factories.ObstacleFactory;
 import com.dimar.frontend.observers.ScoreUIObserver;
 import com.dimar.frontend.obstacles.BaseObstacle;
 import com.dimar.frontend.obstacles.HomingMissile;
+import com.dimar.frontend.strategies.DifficultyStrategy;
+import com.dimar.frontend.strategies.EasyDifficultyStrategy;
+import com.dimar.frontend.strategies.HardDifficultyStrategy;
+import com.dimar.frontend.strategies.MediumDifficultyStrategy;
 
 public class PlayingState implements GameState{
+    private final GameStateManager gsm;
     private ShapeRenderer shapeRenderer;
     private Player player;
     private Ground ground;
@@ -40,20 +45,15 @@ public class PlayingState implements GameState{
     private OrthographicCamera camera;
     private float cameraOffset = 0.2f;
     private int lastLoggedScore = -1;
-    private SpriteBatch batch;
     float cameraFocus;
 
     private Background background;
     private Command jetpackCommand, restartCommand;
     private ScoreUIObserver scoreUIObserver;
+    private DifficultyStrategy difficultyStrategy;
 
-
-    private final GameStateManager gsm;
     public PlayingState(GameStateManager gsm) {
         this.gsm = gsm;
-    }
-
-    public void create(float delta) {
         shapeRenderer = new ShapeRenderer();
         gameManager = GameManager.getInstance();
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -72,17 +72,15 @@ public class PlayingState implements GameState{
         background = new Background();
 
         obstacleFactory = new ObstacleFactory();
+        setDifficulty(new EasyDifficultyStrategy());
         obstacleSpawnTimer = 0f;
         gameManager.startGame();
     }
 
-
     @Override
     public void render(SpriteBatch batch) {
-        float delta = Gdx.graphics.getDeltaTime();
         Gdx.gl.glClearColor(0.529f, 0.808f, 0.922f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        update(delta);
         if (batch == null) {
             batch = new SpriteBatch();
         }
@@ -104,7 +102,12 @@ public class PlayingState implements GameState{
 
         scoreUIObserver.render(scoreUIObserver.getScore());
         shapeRenderer.end();
+    }
 
+    public void setDifficulty(DifficultyStrategy newStrategy) {
+        difficultyStrategy = newStrategy;
+        obstacleFactory.setWeights(newStrategy.getObstacleWeights());
+        System.out.println("The difficulty has changed");
     }
 
     @Override
@@ -114,12 +117,12 @@ public class PlayingState implements GameState{
         }
 
         if (player.getIsDead()) {
-            if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-                restartCommand.execute();
-                resetGame();
-            }
-
-            return;
+            obstacleFactory.releaseAllObstacles();
+            obstacleSpawnTimer = 0f;
+            lastObstacleSpawnX = 0f;
+            camera.position.set(cameraFocus, camera.viewportHeight / 2f, 0);
+            lastLoggedScore = -1;
+            gsm.set(new GameOverState(gsm));
         }
 
         background.update(camera.position.x);
@@ -145,7 +148,17 @@ public class PlayingState implements GameState{
             gameManager.setScore(currentScoreMeters);
         }
 
+        updateDifficulty(currentScoreMeters);
+
         //System.out.println("Distance Travelled = " + player.getDistanceTravelled());
+    }
+
+    private void updateDifficulty(int score) {
+        if (score > 1000 && !(difficultyStrategy instanceof MediumDifficultyStrategy) && !(difficultyStrategy instanceof HardDifficultyStrategy)) {
+            gsm.push(new DifficultyTransitionState(gsm, this, new MediumDifficultyStrategy()));
+        }else if (score > 2000 && !(difficultyStrategy instanceof HardDifficultyStrategy)) {
+            gsm.push(new DifficultyTransitionState(gsm, this, new HardDifficultyStrategy()));
+        }
     }
 
     private void updateCamera(float delta) {
@@ -156,7 +169,7 @@ public class PlayingState implements GameState{
     private void updateObstacle(float delta) {
         obstacleSpawnTimer += delta;
         //System.out.println(obstacleSpawnTimer);
-        if (obstacleSpawnTimer > OBSTACLE_SPAWN_INTERVAL) {
+        if (obstacleSpawnTimer > difficultyStrategy.getSpawnInterval()) {
             spawnObstacle();
             obstacleSpawnTimer = 0f;
         }
@@ -178,10 +191,10 @@ public class PlayingState implements GameState{
     private void spawnObstacle() {
         float tepiKanan = camera.position.x + Gdx.graphics.getWidth() / 2f;
         float spawnAheadOfCamera = tepiKanan + SPAWN_AHEAD_DISTANCE;
-        float spawnAfterLastObstacle = lastObstacleSpawnX + MIN_OBSTACLE_GAP;
+        float spawnAfterLastObstacle = lastObstacleSpawnX + difficultyStrategy.getMinGap();
         float baseSpawnX = Math.max(spawnAheadOfCamera, spawnAfterLastObstacle);
 
-        for (int x = 0; x < OBSTACLE_DENSITY; x++) {
+        for (int x = 0; x < difficultyStrategy.getDensity(); x++) {
             obstacleFactory.createRandomObstacle(ground.getTopY(), baseSpawnX, player.getHeight());
             lastObstacleSpawnX = baseSpawnX;
         }
@@ -192,19 +205,9 @@ public class PlayingState implements GameState{
         for (BaseObstacle obstacle : obstacleFactory.getAllInUseObstacles()) {
             if (obstacle.isColliding(colliderPlayer)) {
                 player.die();
-                System.out.println("Game Over - Press SPACE to restart.");
                 return;
             }
         }
-    }
-
-    public void resetGame() {
-        obstacleFactory.releaseAllObstacles();
-        obstacleSpawnTimer = 0f;
-        lastObstacleSpawnX = 0f;
-        camera.position.set(cameraFocus, camera.viewportHeight / 2f, 0);
-        lastLoggedScore = -1;
-        System.out.println("Game reset!");
     }
 
     @Override
