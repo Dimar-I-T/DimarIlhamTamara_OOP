@@ -2,9 +2,7 @@ package com.dimar.frontend.factories;
 
 import com.dimar.frontend.obstacles.BaseObstacle;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class ObstacleFactory {
     /** Factory Method implementor */
@@ -59,26 +57,34 @@ public class ObstacleFactory {
         }
     }
 
-    private final List<WeightedCreator> weightedCreators = new
-        ArrayList<>();
-    private final Random random = new Random();
-    private int totalWeight = 0;
-    public ObstacleFactory() {
-        register(new VerticalLaserCreator(), 2);
-        register(new HorizontalLaserCreator(), 2);
-        register(new HomingMissileCreator(), 1);
+    private final Map<String, ObstacleCreator> creators = new HashMap<>();
+    private final List<ObstacleCreator> weightedSelection = new ArrayList<>();
+    private void register(ObstacleCreator creator) {
+        creators.put(creator.getName(), creator);
     }
 
-    public void register(ObstacleCreator creator, int weight) {
-        weightedCreators.add(new WeightedCreator(creator, weight));
-        totalWeight += weight;
+    private final Random random = new Random();
+    public ObstacleFactory() {
+        register(new VerticalLaserCreator());
+        register(new HorizontalLaserCreator());
+        register(new HomingMissileCreator());
+    }
+
+    public void setWeights(Map<String, Integer> weights) {
+        weightedSelection.clear();
+        for (Map.Entry<String, Integer> entry : weights.entrySet()) {
+            for (int i = 0; i < entry.getValue(); i++) {
+                weightedSelection.add(creators.get(entry.getKey()));
+            }
+        }
     }
 
     /** Factory Method using weighted random selection */
     public BaseObstacle createRandomObstacle(float groundTopY, float spawnX, float playerHeight) {
-        if (weightedCreators.isEmpty()) {
+        if (weightedSelection.isEmpty()) {
             throw new IllegalStateException("No obstacle creators registered");
         }
+
         ObstacleCreator creator = selectWeightedCreator();
         return creator.create(groundTopY, spawnX, playerHeight, random);
     }
@@ -87,7 +93,7 @@ public class ObstacleFactory {
         int randomValue = random.nextInt(totalWeight);
         int currentWeight = 0;
 
-        for (WeightedCreator wc : weightedCreators) {
+        for (ObstacleCreator wc : creators.values()) {
             currentWeight += wc.weight;
             if (randomValue < currentWeight) {
                 return wc.creator;
@@ -97,24 +103,24 @@ public class ObstacleFactory {
         return weightedCreators.get(0).creator;
     }
     public void releaseObstacle(BaseObstacle obstacle) {
-        for (WeightedCreator wc : weightedCreators) {
-            if (wc.creator.supports(obstacle)) {
-                wc.creator.release(obstacle);
+        for (ObstacleCreator wc : creators.values()) {
+            if (wc.supports(obstacle)) {
+                wc.release(obstacle);
                 return;
             }
         }
     }
 
     public void releaseAllObstacles() {
-        for (WeightedCreator wc : weightedCreators) {
-            wc.creator.releaseAll();
+        for (ObstacleCreator wc : creators.values()) {
+            wc.releaseAll();
         }
     }
 
     public List<BaseObstacle> getAllInUseObstacles() {
         List<BaseObstacle> list = new ArrayList<>();
-        for (WeightedCreator wc : weightedCreators) {
-            list.addAll(wc.creator.getInUse());
+        for (ObstacleCreator wc : creators.values()) {
+            list.addAll(wc.getInUse());
         }
 
         return list;
@@ -123,8 +129,8 @@ public class ObstacleFactory {
     public List<String> getRegisteredCreatorNames() {
         List<String> names = new ArrayList<>();
 
-        for (WeightedCreator wc : weightedCreators) {
-            names.add(wc.creator.getName());
+        for (ObstacleCreator wc : creators.values()) {
+            names.add(wc.getName());
         }
         return names;
     }
