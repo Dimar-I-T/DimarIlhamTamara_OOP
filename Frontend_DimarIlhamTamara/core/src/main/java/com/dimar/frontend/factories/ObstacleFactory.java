@@ -90,18 +90,10 @@ public class ObstacleFactory {
     }
 
     private ObstacleCreator selectWeightedCreator() {
-        int randomValue = random.nextInt(totalWeight);
-        int currentWeight = 0;
-
-        for (ObstacleCreator wc : creators.values()) {
-            currentWeight += wc.weight;
-            if (randomValue < currentWeight) {
-                return wc.creator;
-            }
-        }
-
-        return weightedCreators.get(0).creator;
+        int randomValue = random.nextInt(weightedSelection.size()) - 1;
+        return weightedSelection.get(randomValue);
     }
+
     public void releaseObstacle(BaseObstacle obstacle) {
         for (ObstacleCreator wc : creators.values()) {
             if (wc.supports(obstacle)) {
