@@ -18,7 +18,7 @@ public class Player {
     private boolean isDead;
     private Vector2 startPosition;
 
-    private float baseSpeed = 400f;
+    private float baseSpeed = 500f;
     private float distanceTravelled = 0f;
     private float Delta;
 
