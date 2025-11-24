@@ -21,6 +21,7 @@ import com.dimar.frontend.observers.ScoreUIObserver;
 import com.dimar.frontend.obstacles.BaseObstacle;
 import com.dimar.frontend.obstacles.HomingMissile;
 import com.dimar.frontend.states.GameStateManager;
+import com.dimar.frontend.states.MenuState;
 import com.dimar.frontend.states.PlayingState;
 
 import java.util.ArrayList;
@@ -34,7 +35,7 @@ public class Main extends ApplicationAdapter {
     public void create() {
         spriteBatch = new SpriteBatch();
         gsm = new GameStateManager();
-        gsm.push(new PlayingState(gsm));
+        gsm.push(new MenuState(gsm));
     }
 
     @Override
@@ -47,7 +48,8 @@ public class Main extends ApplicationAdapter {
     @Override
     public void dispose() {
         super.dispose();
-        gsm.pop();
-        spriteBatch.dispose();
+        if (spriteBatch != null) {
+            spriteBatch.dispose();
+        }
     }
 }

@@ -31,16 +31,16 @@ public class GameManager {
             public void onSuccess(String response) {
                 try {
                     JsonValue parse = new JsonReader().parse(response);
-                    currentPlayerId = parse.name;
-                    Gdx.app.log("id", "ID tersimpan");
+                    currentPlayerId = parse.getString("playerId");
+                    Gdx.app.log("PLAYER", "ID tersimpan: " + currentPlayerId);
                 } catch (Exception exception){
-
+                    Gdx.app.error("JSON_ERROR", "Gagal parsing playerId", exception);
                 }
             }
 
             @Override
             public void onError(String error) {
-                Gdx.app.error("id", "error");
+                Gdx.app.error("ERROR", error);
             }
         });
     }
@@ -68,13 +68,33 @@ public class GameManager {
         }
 
         int score = scoreManager.getScore() + coinsCollected*10;
-//        backendService.submitScore(currentPlayerId, score, coinsCollected);
+        int jarak = scoreManager.getScore();
+        backendService.submitScore(currentPlayerId, score, coinsCollected, jarak, new BackendService.RequestCallback() {
+            @Override
+            public void onSuccess(String response) {
+                Gdx.app.log("SUCCESS", "Berhasil mensubmit score");
+            }
+
+            @Override
+            public void onError(String error) {
+                Gdx.app.error("ERROR", error);
+            }
+        });
     }
 
-    public void setScore(int newScore) {
+    public void addCoin() {
+        coinsCollected++;
+        Gdx.app.log("COIN COLLECTED!", "Total: "  + coinsCollected);
+    }
+
+    public void setScore(int distance) {
         if (gameActive) {
-            scoreManager.setScore(newScore);
+            scoreManager.setScore(distance);
         }
+    }
+
+    public int getCoins() {
+        return coinsCollected;
     }
 
     public int getScore() {

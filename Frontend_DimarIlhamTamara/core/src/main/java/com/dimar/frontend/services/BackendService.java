@@ -5,7 +5,7 @@ import com.badlogic.gdx.net.HttpRequestBuilder;
 
 
 public class BackendService {
-    private static final String BASE_URL = "http://localhost:8080/api";
+    private static final String BASE_URL = "http://localhost:8081/api";
 
     public interface RequestCallback {
         void onSuccess(String response);

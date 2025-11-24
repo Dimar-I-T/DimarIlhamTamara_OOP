@@ -11,7 +11,7 @@ public class Coin {
     private boolean active;
 
     private float bobOffset;
-    private float bobSpeed;
+    private float bobSpeed = 10f;
 
     public Coin(Vector2 startPosition) {
         position = startPosition;
@@ -19,15 +19,15 @@ public class Coin {
     }
 
     public void update(float delta) {
-        bobOffset = bobSpeed * delta;
-        collider.setPosition(position.x, bobOffset);
-        position.set(position.x, bobOffset);
+        bobOffset += bobSpeed * delta;
+        float drawY = position.y + (float)(Math.sin(bobOffset) * 5f);
+        collider.setPosition(position.x - radius, drawY - radius);
     }
 
     public void renderShape(ShapeRenderer shapeRenderer) {
         float drawY = position.y + (float)(Math.sin(bobOffset) * 5f);
         shapeRenderer.setColor(1f, 1f, 0f,  1f);
-        shapeRenderer.circle(collider.x, drawY, radius);
+        shapeRenderer.circle(position.x, drawY, radius);
     }
 
     public boolean isColliding(Rectangle playerCollider) {
@@ -36,7 +36,12 @@ public class Coin {
 
     public void initialize(float x, float y) {
         this.position.set(x, y);
-        this.collider.setPosition(x, y);
+        this.collider.setPosition(x - radius, y - radius);
+        this.active = true;
+    }
+
+    public Vector2 getPosition() {
+        return position;
     }
 
     public void setActive(boolean newBool) {

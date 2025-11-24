@@ -10,12 +10,12 @@ import java.util.List;
 import java.util.Random;
 
 public class CoinFactory {
-    private CoinPool coinPool;
-    private Random random;
+    private CoinPool coinPool = new CoinPool();
+    private Random random = new Random();
 
     public void createCoinPattern(float spawnX, float groundTopY) {
         int randomValue = random.nextInt(10);
-        float randomY = random.nextFloat(Gdx.graphics.getHeight() - groundTopY) + groundTopY;
+        float randomY = groundTopY + random.nextFloat() * (Gdx.graphics.getHeight() - groundTopY);
         if (randomValue == 0 || randomValue == 1 || randomValue == 2) {
             float jarak = 40f;
             for (int x = 0; x < 3; x++) {
