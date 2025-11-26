@@ -1,12 +1,13 @@
 package com.dimar.frontend.obstacles;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 public abstract class BaseObstacle {
-    private Vector2 position;
+    protected Vector2 position;
     Rectangle collider;
     float length;
     final float WIDTH = 10f;
@@ -23,6 +24,10 @@ public abstract class BaseObstacle {
         this.position.set(startPosition);
         this.length = length;
         updateCollider();
+    }
+
+    public void render(SpriteBatch batch) {
+
     }
 
     public void render(ShapeRenderer shapeRenderer) {

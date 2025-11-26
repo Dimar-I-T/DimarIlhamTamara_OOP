@@ -17,12 +17,12 @@ import com.dimar.frontend.factories.ObstacleFactory;
 import com.dimar.frontend.observers.ScoreUIObserver;
 import com.dimar.frontend.obstacles.BaseObstacle;
 import com.dimar.frontend.obstacles.HomingMissile;
-import com.dimar.frontend.strategies.DifficultyStrategy;
-import com.dimar.frontend.strategies.EasyDifficultyStrategy;
-import com.dimar.frontend.strategies.HardDifficultyStrategy;
-import com.dimar.frontend.strategies.MediumDifficultyStrategy;
+import com.dimar.frontend.strategies.*;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
 
 public class PlayingState implements GameState{
     private final GameStateManager gsm;
@@ -41,6 +41,7 @@ public class PlayingState implements GameState{
     static final float OBSTACLE_CLUSTER_SPACING = 250f;
     private CoinFactory coinFactory;
     private float coinSpawnTimer = 0f;
+    private Random random = new Random();
 
     float currentScore;
 
@@ -54,6 +55,8 @@ public class PlayingState implements GameState{
     private ScoreUIObserver scoreUIObserver;
     private DifficultyStrategy difficultyStrategy;
 
+    private final List<CoinPattern> coinPatterns;
+
     public PlayingState(GameStateManager gsm) {
         this.gsm = gsm;
         shapeRenderer = new ShapeRenderer();
@@ -63,6 +66,9 @@ public class PlayingState implements GameState{
         player = new Player(new Vector2(100, Gdx.graphics.getHeight() / 2f));
         ground = new Ground();
         coinFactory = new CoinFactory();
+        coinPatterns = new ArrayList<>();
+        coinPatterns.add(new LinePattern());
+        coinPatterns.add(new RectanglePattern());
 
         jetpackCommand = new JetpackCommand(player);
 
@@ -93,24 +99,33 @@ public class PlayingState implements GameState{
         batch.begin();
         background.render(batch);
 
-        shapeRenderer.setProjectionMatrix(camera.combined);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        player.render(batch);
+        for (BaseObstacle obstacle : obstacleFactory.getAllInUseObstacles()) {
+            if (obstacle instanceof HomingMissile){
+                obstacle.render(batch);
+            }
+        }
+
         batch.end();
 
-        player.renderShape(shapeRenderer);
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+        shapeRenderer.setProjectionMatrix(camera.combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         ground.renderShape(shapeRenderer);
-
         for (BaseObstacle obstacle : obstacleFactory.getAllInUseObstacles()) {
-            obstacle.render(shapeRenderer);
+            if (!(obstacle instanceof HomingMissile)){
+                obstacle.render(shapeRenderer);
+            }
         }
 
         for (Coin coin : coinFactory.getInUse()) {
             coin.renderShape(shapeRenderer);
         }
 
-        scoreUIObserver.render(scoreUIObserver.getScore(), gameManager.getCoins());
-
         shapeRenderer.end();
+        Gdx.gl.glDisable(GL20.GL_BLEND);
+        scoreUIObserver.render(scoreUIObserver.getScore(), gameManager.getCoins());
     }
 
     public void setDifficulty(DifficultyStrategy newStrategy) {
@@ -167,10 +182,16 @@ public class PlayingState implements GameState{
 
     private void updateCoins(float delta) {
         coinSpawnTimer += delta;
-        if (coinSpawnTimer > 0.5f) {
-            float spawnX = camera.position.x + Gdx.graphics.getWidth();
-            coinFactory.createCoinPattern(spawnX, ground.getTopY());
-            coinSpawnTimer = 0f;
+        float spawnInterval = 2f + random.nextFloat()*2f;
+        if (coinSpawnTimer > spawnInterval) {
+            float cameraRightEdge = camera.position.x + Gdx.graphics.getWidth() / 2f;
+            float spawnX = cameraRightEdge + 100f;
+            if (!coinPatterns.isEmpty()) {
+                CoinPattern pattern = coinPatterns.get(random.nextInt(coinPatterns.size()));
+                pattern.spawn(coinFactory, ground.getTopY(), spawnX, Gdx.graphics.getHeight());
+            }
+
+            coinSpawnTimer = 0;
         }
 
         Iterator<Coin> iterator = coinFactory.getInUse().iterator();

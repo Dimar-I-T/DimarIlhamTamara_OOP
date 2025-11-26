@@ -1,6 +1,7 @@
 package com.dimar.frontend;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 
@@ -28,7 +29,7 @@ public class Ground {
     }
 
     public void renderShape(ShapeRenderer shapeRenderer) {
-        shapeRenderer.setColor(0.5f, 0.5f, 0.5f,  1f);
+        shapeRenderer.setColor(0.5f, 0.5f, 1f,  0);
         shapeRenderer.rect(collider.x, collider.y, collider.width, collider.height);
     }
 }
